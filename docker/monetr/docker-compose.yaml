@@ -28,12 +28,12 @@ services:
       # your monetr instance is exposed to the public internet. Otherwise
       # strangers may be able to use your instance themselves.
       MONETR_ALLOW_SIGN_UP: ${MONETR_ALLOW_SIGN_UP:-true}
-      MONETR_PG_USERNAME: postgres
-      MONETR_PG_PASSWORD: superSecretPasswordPleaseChangeMe
+      MONETR_PG_USERNAME: ${MONETR_PG_USERNAME}
+      MONETR_PG_PASSWORD: ${MONETR_PG_PASSWORD}
       MONETR_PG_DATABASE: monetr
-      MONETR_PG_ADDRESS: postgres
+      MONETR_PG_ADDRESS: {MONETR_PG_ADDRESS}
       MONETR_REDIS_ENABLED: "true"
-      MONETR_REDIS_ADDRESS: valkey
+      MONETR_REDIS_ADDRESS: ${MONETR_REDIS_ADDRESS}
       MONETR_STORAGE_ENABLED: ${MONETR_STORAGE_ENABLED:-true}
       MONETR_STORAGE_PROVIDER: ${MONETR_STORAGE_PROVIDER:-filesystem}
     networks:
