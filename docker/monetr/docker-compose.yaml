@@ -1,0 +1,44 @@
+services:
+  monetr:
+    image: ghcr.io/monetr/monetr:latest
+    container_name: monetr
+    healthcheck: 
+      test: "timeout 5s bash -c ':> /dev/tcp/127.0.0.1/4000' || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
+    restart: unless-stopped
+    command:
+      - serve
+      # Setup the database and perform migrations.
+      - --migrate
+      # Since certificates will not have been created, make some.
+      - --generate-certificates
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.monetr.tls=true"
+      - "traefik.http.routers.monetr.rule=Host(`monetr.int.jersh.tech`)"
+      - "traefik.http.services.monetr.loadbalancer.server.port=4000"
+    volumes:
+      # Contains certificates generated on startup as well as config
+      - monetrData:/etc/monetr
+    environment:
+      # After creating your own user, it is recommended to disable sign ups if
+      # your monetr instance is exposed to the public internet. Otherwise
+      # strangers may be able to use your instance themselves.
+      MONETR_ALLOW_SIGN_UP: ${MONETR_ALLOW_SIGN_UP:-true}
+      MONETR_PG_USERNAME: postgres
+      MONETR_PG_PASSWORD: superSecretPasswordPleaseChangeMe
+      MONETR_PG_DATABASE: monetr
+      MONETR_PG_ADDRESS: postgres
+      MONETR_REDIS_ENABLED: "true"
+      MONETR_REDIS_ADDRESS: valkey
+      MONETR_STORAGE_ENABLED: ${MONETR_STORAGE_ENABLED:-true}
+      MONETR_STORAGE_PROVIDER: ${MONETR_STORAGE_PROVIDER:-filesystem}
+    networks:
+      - proxy
+
+volumes:
+  monetrData:
+    external: true
