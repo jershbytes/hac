@@ -6,7 +6,7 @@ services:
     devices:
       - /dev/bus/usb
     networks:
-      - nut_network
+      - backend
     restart: unless-stopped
 
   peanut:
@@ -21,7 +21,7 @@ services:
     volumes:
       - /opt/docker/peaNUT/config:/config
     networks:
-      - nut_network
+      - backend
       - proxy
     environment:
       - WEB_PORT=8080
@@ -32,7 +32,7 @@ services:
       - INFLUX_INTERVAL=3
 
 networks:
-  nut_network:
+  backend:
     external:
       true
   
