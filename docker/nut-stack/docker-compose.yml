@@ -1,0 +1,41 @@
+---
+services:
+  nut-upsd:
+    image: instantlinux/nut-upsd
+    container_name: nut-upsd
+    devices:
+      - /dev/bus/usb
+    networks:
+      - nut_network
+    restart: unless-stopped
+
+  peanut:
+    image: brandawg93/peanut:latest
+    container_name: PeaNUT
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.PeaNUT.tls=true"
+      - "traefik.http.routers.PeaNUT.rule=Host(`PeaNUT.int.home.lab`)"
+      - "traefik.http.services.PeaNUT.loadbalancer.server.port=8080"
+    restart: unless-stopped
+    volumes:
+      - /opt/docker/peaNUT/config:/config
+    networks:
+      - nut_network
+      - proxy
+    environment:
+      - WEB_PORT=8080
+      - INFLUX_HOST=${INFLUX_HOST}
+      - INFLUX_TOKEN=${INFLUX_TOKEN}
+      - INFLUX_ORG=homelab
+      - INFLUX_BUCKET=ups
+      - INFLUX_INTERVAL=3
+
+networks:
+  nut_network:
+    external:
+      true
+  
+  proxy:
+    external:
+      true
