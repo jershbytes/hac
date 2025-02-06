@@ -18,7 +18,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.monetr.tls=true"
-      - "traefik.http.routers.monetr.rule=Host(`monetr.int.jersh.tech`)"
+      - "traefik.http.routers.monetr.rule=Host(`monetr.int.home.lab`)"
       - "traefik.http.services.monetr.loadbalancer.server.port=4000"
     volumes:
       # Contains certificates generated on startup as well as config
